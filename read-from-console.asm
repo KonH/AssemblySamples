@@ -8,21 +8,35 @@
 
 global _main ; Entry point
 
+section .bss
+inputBuffer resb 2
+inputBufferSize equ $-inputBuffer
+
 section .text
 
 _main:
+    call read_input
+    call write_input
+    call exit
+    ret
+
+read_input:
     mov rax, SYS_read
     mov rdi, STDIN
-    lea rsi, [rsp-2]
-    mov rdx, 2
+    mov rsi, inputBuffer
+    mov rdx, inputBufferSize
     syscall
+    ret
     
+write_input:
     mov rax, SYS_write
     mov rdi, STDOUT
-    lea rsi, [rsp-2]
-    mov rdx, 2
+    mov rsi, inputBuffer
+    mov rdx, inputBufferSize
     syscall
+    ret
 
+exit:
     mov rax, SYS_exit
     mov rdi, 0
     syscall
