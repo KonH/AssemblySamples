@@ -2,10 +2,29 @@ if [ $# -ne 1 ];
     then echo "Please provide filename without extension!"
     exit 1
 fi
+
 FILENAME=$1
-echo "Building '$FILENAME'"
+
+echo "Clean up..."
 rm -f $FILENAME
 rm -f $FILENAME.o
-as $FILENAME.asm -o $FILENAME.o
-ld $FILENAME.o -lSystem -e _main -o $FILENAME
+
+echo "Building '$FILENAME' with nasm"
+nasm -f macho64 "$FILENAME.asm"
+if [ ! -f $FILENAME.o ]; then
+    echo "File '$FILENAME.o' is not found!"
+    exit 1
+fi
+
+echo "Linking '$FILENAME.o' with ld"
+ld -lSystem "$FILENAME.o" -o "$FILENAME"
+if [ ! -f $FILENAME ]; then
+    echo "File '$FILENAME' is not found!"
+    exit 1
+fi
+
 echo 'Build finished'
+echo 'Running...'
+./$FILENAME
+
+ 
