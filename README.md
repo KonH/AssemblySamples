@@ -1,4 +1,4 @@
-# Mac OS Match-O x64 Assembler Samples
+# Mac OS x64 Assembler Samples
 
 # Registers
 
@@ -13,15 +13,16 @@
 
 # Data types
 - byte - 1 byte
-- long - 2 bytes
-- quad - 4 bytes
+- word - 2 bytes
+- doubleword/long - 4 bytes
+- quadword/quad - 8 bytes
 
 # Instructions
-Suffixes: l - long, q - quad
+Suffixes: w - word, l - long, q - quad
 | Instruction | Description |
 | ----------- | ----------- |
-| mov S, D    | Move source to destination
-| lea S, D    | Load effective address of source into destination
+| mov D, S    | Move source to destination
+| lea D, S    | Load effective address of source into destination
 | syscall     | Perform syscall, described later
 
 # Utils
@@ -31,7 +32,7 @@ Suffixes: l - long, q - quad
 
 ## Syscall constants
 To perform syscall find it number here:
-**/usr/include/sys/syscall.h** or **/Library/CommandLineTools/SDKs/MacOSX.?.sdk/usr/include/sys/syscall.h**
+**/usr/include/sys/syscall.h** or **/Library/Developer/CommandLineTools/SDKs/MacOSX.?.sdk/usr/include/sys/syscall.h**
 
 ## Data type representation
 - **int**: 32 bit / 4 byte (signed)
@@ -47,4 +48,5 @@ Return value is %rax
 
 ## Syscall declarations
 - void exit(int exit_code)
+- ssize_t read(int fd, void *buf, size_t count);
 - ssize_t write(int fd, const void *buf, size_t count)
