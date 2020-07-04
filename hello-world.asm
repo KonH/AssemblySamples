@@ -1,15 +1,23 @@
-.data
-str: .asciz "Hello world!\n"
+%define SYS_write 0x2000004
+%define SYS_exit 0x2000001
+%define STDOUT 1
 
-.text
-.globl _main
+global _main ; Entry point
+
+section .data
+
+msg:    db      "Hello, world!", 10
+.len:   equ     $ - msg
+
+section .text
+
 _main:
-    movl $0x2000004, %eax # SYS_write
-    movl $1, %edi         # STDOUT file descriptor is 1
-    leaq str(%rip), %rsi  # The value to print
-    movq $100, %rdx       # Maximum size of the value to print (.asciz zero-terminated)
+    mov rax, SYS_write
+    mov rdi, STDOUT
+    mov rsi, msg
+    mov rdx, msg.len
     syscall
 
-    movl $0, %ebx
-    movl $0x2000001, %eax  # SYS_exit
+    mov rax, SYS_exit
+    mov rdi, 0
     syscall
