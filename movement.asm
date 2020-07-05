@@ -54,8 +54,8 @@ playerCell: db "X"
 newLine: db 10
 
 section .bss
-playerX resb 8
-playerY resb 8
+playerX resb 1
+playerY resb 1
 inputBuffer resb 2
 inputBufferSize equ $-inputBuffer
 firstInputChar resb 1
@@ -69,10 +69,8 @@ _main:
     ret
 
 init:
-    mov rax, WIDTH_SIZE / 2
-    mov [rel playerX], rax
-    mov rbx, HEIGHT_SIZE / 2
-    mov [rel playerY], rbx
+    mov byte [rel playerX], WIDTH_SIZE / 2
+    mov byte [rel playerY], HEIGHT_SIZE / 2
     ret
 
 game_loop:
@@ -81,8 +79,7 @@ game_loop:
         call input
         call update
         mov al, [rel inputBuffer] ; Repeat until \n is found
-        mov bl, [rel newLine]
-        cmp al, bl
+        cmp al, [rel newLine]
         jne .while_loop_body
     call exit
     ret
@@ -92,32 +89,32 @@ read_input:
     ret
     
 render:
-    xor rcx, rcx ; y = 0
+    xor cl, cl ; y = 0
     .for_y_body: 
-        xor rbx, rbx ; x = 0
+        xor bl, bl ; x = 0
         .for_x_body:
-            push rbx            ; Save counters to prevent modifications inside syscall
+            push rbx           ; Save counters to prevent modifications inside syscall
             push rcx
             call write_cell
             write_space
-            pop rcx             ; Restore counters
+            pop rcx            ; Restore counters
             pop rbx
-            inc rbx             ; x++
-            cmp rbx, WIDTH_SIZE ; x == WIDTH_SIZE
+            inc bl             ; x++
+            cmp bl, WIDTH_SIZE ; x == WIDTH_SIZE
             jne .for_x_body
         push rcx
         write_new_line
         pop rcx
-        inc rcx             ; y++
-        cmp rcx, HEIGHT_SIZE ; y == HEIGHT_SIZE
+        inc cl             ; y++
+        cmp cl, HEIGHT_SIZE ; y == HEIGHT_SIZE
         jne .for_y_body
     ret
 
 ; Write empty or player cell
 write_cell:
-    cmp rcx, [rel playerY]
+    cmp cl, [rel playerY]
     jne .empty
-    cmp rbx, [rel playerX]
+    cmp bl, [rel playerX]
     jne .empty
         write_player_cell
         ret
@@ -141,28 +138,28 @@ update:
     je .inc_y
     ret
     .inc_x:
-        inc qword [rel playerX]
-        cmp qword [rel playerX], WIDTH_SIZE
+        inc byte [rel playerX]
+        cmp byte [rel playerX], WIDTH_SIZE
         jl .exit
-        mov qword [rel playerX], 0
+        mov byte [rel playerX], 0
         ret
     .dec_x:
-        dec qword [rel playerX]
-        cmp qword [rel playerX], 0
+        dec byte [rel playerX]
+        cmp byte [rel playerX], 0
         jge .exit
-        mov qword [rel playerX], WIDTH_SIZE - 1
+        mov byte [rel playerX], WIDTH_SIZE - 1
         ret
     .inc_y:
-        inc qword [rel playerY]
-        cmp qword [rel playerY], HEIGHT_SIZE
+        inc byte [rel playerY]
+        cmp byte [rel playerY], HEIGHT_SIZE
         jl .exit
-        mov qword [rel playerY], 0
+        mov byte [rel playerY], 0
         ret
     .dec_y:
-        dec qword [rel playerY]
-        cmp qword [rel playerY], 0
+        dec byte [rel playerY]
+        cmp byte [rel playerY], 0
         jge .exit
-        mov qword [rel playerY], HEIGHT_SIZE - 1
+        mov byte [rel playerY], HEIGHT_SIZE - 1
         ret
     .exit:
         ret
