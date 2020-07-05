@@ -26,5 +26,6 @@ fi
 echo 'Build finished'
 echo 'Running...'
 ./$FILENAME
+echo "Finished with $? exit code"
 
  
