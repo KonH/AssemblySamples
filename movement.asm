@@ -5,8 +5,8 @@
 %define SYS_exit 0x2000001
 %define STDIN 0
 %define STDOUT 1
-%define WIDTH_SIZE 5
-%define HEIGHT_SIZE 3
+%define WIDTH_SIZE 10
+%define HEIGHT_SIZE 6
 
 %macro syscall_1 2
 mov rax, %1 ; syscall number
@@ -69,9 +69,9 @@ _main:
     ret
 
 init:
-    mov rax, 1
+    mov rax, WIDTH_SIZE / 2
     mov [rel playerX], rax
-    mov rbx, 0
+    mov rbx, HEIGHT_SIZE / 2
     mov [rel playerY], rbx
     ret
 
