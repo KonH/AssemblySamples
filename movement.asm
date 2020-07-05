@@ -58,6 +58,7 @@ playerX resb 8
 playerY resb 8
 inputBuffer resb 2
 inputBufferSize equ $-inputBuffer
+firstInputChar resb 1
 
 section .text
 
@@ -77,8 +78,13 @@ init:
 game_loop:
     .while_loop_body:
         call render
+        call input
         call update
-    .while_loop_end:
+        mov al, [rel inputBuffer] ; Repeat until \n is found
+        mov bl, [rel newLine]
+        cmp al, bl
+        jne .while_loop_body
+    call exit
     ret
 
 read_input:
@@ -119,8 +125,33 @@ write_cell:
         write_empty_cell
         ret
 
-update:
+input:
+    syscall_3 SYS_read,STDIN,inputBuffer,inputBufferSize
     ret
+
+update:
+    mov al, [rel inputBuffer]
+    cmp al, 97 ; a
+    je .dec_x
+    cmp al, 100 ; d
+    je .inc_x
+    cmp al, 119 ; w
+    je .dec_y
+    cmp al, 115 ; s
+    je .inc_y
+    ret
+    .inc_x:
+        inc qword [rel playerX]
+        ret
+    .dec_x:
+        dec qword [rel playerX]
+        ret
+    .inc_y:
+        inc qword [rel playerY]
+        ret
+    .dec_y:
+        dec qword [rel playerY]
+        ret
 
 exit:
     syscall_1 SYS_exit,0
