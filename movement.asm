@@ -127,6 +127,24 @@ input:
     ret
 
 update:
+; %1 - register storage
+; %2 - limiter
+%macro update_position_inc 2
+    inc %1
+    cmp %1, %2
+    jl .exit
+    mov %1, 0
+    jmp .exit
+%endmacro
+; %1 - register storage
+; %2 - limiter
+%macro update_position_dec 2
+    dec %1
+    cmp %1, 0
+    jge .exit
+    mov %1, %2 - 1
+    jmp .exit
+%endmacro
     mov al, [rel inputBuffer]
     mov bl, [rel playerX] ; Save position to temp registers
     mov cl, [rel playerY]
@@ -140,29 +158,13 @@ update:
     je .inc_y
     ret
     .inc_x:
-        inc bl
-        cmp bl, WIDTH_SIZE
-        jl .exit
-        mov bl, 0
-        jmp .exit
+        update_position_inc bl,WIDTH_SIZE
     .dec_x:
-        dec bl
-        cmp bl, 0
-        jge .exit
-        mov bl, WIDTH_SIZE - 1
-        jmp .exit
+        update_position_dec bl,WIDTH_SIZE
     .inc_y:
-        inc cl
-        cmp cl, HEIGHT_SIZE
-        jl .exit
-        mov cl, 0
-        jmp .exit
+        update_position_inc cl,HEIGHT_SIZE
     .dec_y:
-        dec cl
-        cmp cl, 0
-        jge .exit
-        mov cl, HEIGHT_SIZE - 1
-        jmp .exit
+        update_position_dec cl,HEIGHT_SIZE
     .exit:
         mov [rel playerX], bl ; Load position from temp registers
         mov [rel playerY], cl
