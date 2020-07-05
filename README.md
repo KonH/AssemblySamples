@@ -18,7 +18,7 @@
 - quadword/quad - 8 bytes
 
 # Instructions
-Suffixes: w - word, l - long, q - quad
+Suffixes (Apple syntax): w - word, l - long, q - quad
 | Instruction | Description |
 | ----------- | ----------- |
 | mov D, S    | Move source to destination
