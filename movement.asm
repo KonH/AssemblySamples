@@ -128,6 +128,8 @@ input:
 
 update:
     mov al, [rel inputBuffer]
+    mov bl, [rel playerX] ; Save position to temp registers
+    mov cl, [rel playerY]
     cmp al, 97 ; a
     je .dec_x
     cmp al, 100 ; d
@@ -138,30 +140,32 @@ update:
     je .inc_y
     ret
     .inc_x:
-        inc byte [rel playerX]
-        cmp byte [rel playerX], WIDTH_SIZE
+        inc bl
+        cmp bl, WIDTH_SIZE
         jl .exit
-        mov byte [rel playerX], 0
-        ret
+        mov bl, 0
+        jmp .exit
     .dec_x:
-        dec byte [rel playerX]
-        cmp byte [rel playerX], 0
+        dec bl
+        cmp bl, 0
         jge .exit
-        mov byte [rel playerX], WIDTH_SIZE - 1
-        ret
+        mov bl, WIDTH_SIZE - 1
+        jmp .exit
     .inc_y:
-        inc byte [rel playerY]
-        cmp byte [rel playerY], HEIGHT_SIZE
+        inc cl
+        cmp cl, HEIGHT_SIZE
         jl .exit
-        mov byte [rel playerY], 0
-        ret
+        mov cl, 0
+        jmp .exit
     .dec_y:
-        dec byte [rel playerY]
-        cmp byte [rel playerY], 0
+        dec cl
+        cmp cl, 0
         jge .exit
-        mov byte [rel playerY], HEIGHT_SIZE - 1
-        ret
+        mov cl, HEIGHT_SIZE - 1
+        jmp .exit
     .exit:
+        mov [rel playerX], bl ; Load position from temp registers
+        mov [rel playerY], cl
         ret
 
 exit:
