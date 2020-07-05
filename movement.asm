@@ -142,15 +142,29 @@ update:
     ret
     .inc_x:
         inc qword [rel playerX]
+        cmp qword [rel playerX], WIDTH_SIZE
+        jl .exit
+        mov qword [rel playerX], 0
         ret
     .dec_x:
         dec qword [rel playerX]
+        cmp qword [rel playerX], 0
+        jge .exit
+        mov qword [rel playerX], WIDTH_SIZE - 1
         ret
     .inc_y:
         inc qword [rel playerY]
+        cmp qword [rel playerY], HEIGHT_SIZE
+        jl .exit
+        mov qword [rel playerY], 0
         ret
     .dec_y:
         dec qword [rel playerY]
+        cmp qword [rel playerY], 0
+        jge .exit
+        mov qword [rel playerY], HEIGHT_SIZE - 1
+        ret
+    .exit:
         ret
 
 exit:
